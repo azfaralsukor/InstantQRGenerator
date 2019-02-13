@@ -12,6 +12,7 @@ class App extends StatelessWidget {
       title: 'Instant QR Generator',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        indicatorColor: Colors.grey,
       ),
       home: MainScreen(),
       debugShowCheckedModeBanner: false,
