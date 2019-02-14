@@ -7,10 +7,13 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-String _dataString = 'Hello World',
+String _dataString = '',
     _active = 'Email',
     _inputEmailText,
-    _inputErrorText;
+    _inputErrorText,
+    _email,
+    _phone,
+    _wifi;
 final TextEditingController _emailController = TextEditingController(),
     _phoneController = TextEditingController(),
     _wifiController = TextEditingController();
@@ -25,8 +28,10 @@ class _MainScreenState extends State<MainScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+
         appBar: AppBar(
-          title: const Text('Instant QR Generator'),
+          centerTitle: true,
+          title: const Icon(Icons.flip),
         ),
         bottomNavigationBar: TabBar(
           tabs: const <Tab>[
@@ -108,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
                     : Theme.of(context).indicatorColor,
                 onPressed: () {
                   setState(() {
-                    _dataString = _emailController.text;
+                    _dataString = _email;
                     _inputEmailText = null;
                     _active = 'Email';
                   });
@@ -126,7 +131,7 @@ class _MainScreenState extends State<MainScreen> {
                     : Theme.of(context).indicatorColor,
                 onPressed: () {
                   setState(() {
-                    _dataString = _phoneController.text;
+                    _dataString = _phone;
                     _inputErrorText = null;
                     _active = 'Phone';
                   });
@@ -144,7 +149,7 @@ class _MainScreenState extends State<MainScreen> {
                     : Theme.of(context).indicatorColor,
                 onPressed: () {
                   setState(() {
-                    _dataString = _wifiController.text;
+                    _dataString = _wifi;
                     _inputErrorText = null;
                     _active = 'Wifi';
                   });
@@ -174,10 +179,38 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showSettingsDialog() {
+    _obscureTextLogin = true;
     showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return _Settings();
+        return _Settings(onSubmit: () {
+          setState(() {
+            switch (_active) {
+              case 'Email':
+                {
+                  _dataString = _emailController.text;
+                  _inputErrorText = null;
+                }
+                break;
+              case 'Phone':
+                {
+                  _dataString = _phoneController.text;
+                  _inputErrorText = null;
+                }
+                break;
+              default:
+                {
+                  _dataString = _wifiController.text;
+                  _inputErrorText = null;
+                }
+                break;
+            }
+          });
+          _email = _emailController.text;
+          _phone = _phoneController.text;
+          _wifi = _wifiController.text;
+          Navigator.of(context).pop();
+        });
       },
     );
   }
@@ -193,6 +226,9 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class _Settings extends StatefulWidget {
+  const _Settings({Key key, this.onSubmit}) : super(key: key);
+  final Function onSubmit;
+
   @override
   State<_Settings> createState() {
     return _SettingsState();
@@ -206,10 +242,10 @@ class _SettingsState extends State<_Settings> {
     });
   }
 
-  void _emailVal(String x) {
+  void _emailVal(String email) {
     final RegExp exp =
         RegExp(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)');
-    final Iterable<Match> matches = exp.allMatches(x);
+    final Iterable<Match> matches = exp.allMatches(email);
     setState(() {
       if (matches.isEmpty) {
         _inputEmailText = '';
@@ -232,10 +268,9 @@ class _SettingsState extends State<_Settings> {
               controller: _emailController,
               onChanged: _emailVal,
               decoration: InputDecoration(
-                icon: const Icon(Icons.email),
-                errorText: _inputEmailText,
-                errorStyle: const TextStyle(fontSize: 0)
-              ),
+                  icon: const Icon(Icons.email),
+                  errorText: _inputEmailText,
+                  errorStyle: const TextStyle(fontSize: 0)),
             ),
             NativeTextField(
               keyboardType: TextInputType.phone,
@@ -267,34 +302,16 @@ class _SettingsState extends State<_Settings> {
         FlatButton(
           child: const Icon(Icons.clear),
           onPressed: () {
+            _emailController.text = _email;
+            _phoneController.text = _phone;
+            _wifiController.text = _wifi;
+            _inputEmailText = null;
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
           child: const Icon(Icons.check),
-          onPressed: () {
-            switch (_active) {
-              case 'Email':
-                {
-                  _dataString = _emailController.text;
-                  _inputErrorText = null;
-                }
-                break;
-              case 'Phone':
-                {
-                  _dataString = _phoneController.text;
-                  _inputErrorText = null;
-                }
-                break;
-              default:
-                {
-                  _dataString = _wifiController.text;
-                  _inputErrorText = null;
-                }
-                break;
-            }
-            Navigator.of(context).pop();
-          },
+          onPressed: _inputEmailText == null ? widget.onSubmit : null,
         ),
       ],
     );

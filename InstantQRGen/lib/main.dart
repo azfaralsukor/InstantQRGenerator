@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'screens/main.screen.dart';
 
-void main() => runApp(App());
+void main() {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  .then((_)=>
+      runApp(App())
+  );
+}
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Instant QR Generator',
+      title: 'QR',
       theme: ThemeData(
         primarySwatch: Colors.teal,
-
         accentColor: Colors.blue,
         indicatorColor: Colors.grey,
-        cupertinoOverrideTheme: MaterialBasedCupertinoThemeData(materialTheme: ThemeData(
-          dividerColor: Colors.grey,
-          primarySwatch: Colors.teal,
-          indicatorColor: Colors.grey,
-        ))
       ),
       home: MainScreen(),
-
       debugShowCheckedModeBanner: false,
     );
   }
