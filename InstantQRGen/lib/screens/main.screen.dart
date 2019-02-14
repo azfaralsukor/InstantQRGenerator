@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter_qr_demo/components/native_dialog.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -220,14 +221,14 @@ class _SettingsState extends State<_Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return NativeDialog(
       title: const Icon(Icons.settings),
       content: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            TextField(
+            NativeTextField(
               controller: _emailController,
               onChanged: _emailVal,
               decoration: InputDecoration(
@@ -236,7 +237,7 @@ class _SettingsState extends State<_Settings> {
                 errorStyle: const TextStyle(fontSize: 0)
               ),
             ),
-            TextField(
+            NativeTextField(
               keyboardType: TextInputType.phone,
               controller: _phoneController,
               decoration: InputDecoration(
@@ -244,7 +245,7 @@ class _SettingsState extends State<_Settings> {
                 errorText: _inputErrorText,
               ),
             ),
-            TextField(
+            NativeTextField(
               controller: _wifiController,
               obscureText: _obscureTextLogin,
               decoration: InputDecoration(
