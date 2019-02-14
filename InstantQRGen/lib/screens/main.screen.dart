@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_qr_demo/components/native_dialog.dart';
+import 'package:flutter_android_pip/flutter_android_pip.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -11,9 +14,9 @@ String _dataString = '',
     _active = 'Email',
     _inputEmailText,
     _inputErrorText,
-    _email,
-    _phone,
-    _wifi;
+    _email = '',
+    _phone = '',
+    _wifi = '';
 final TextEditingController _emailController = TextEditingController(),
     _phoneController = TextEditingController(),
     _wifiController = TextEditingController();
@@ -28,7 +31,6 @@ class _MainScreenState extends State<MainScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-
         appBar: AppBar(
           centerTitle: true,
           title: const Icon(Icons.flip),
@@ -68,6 +70,19 @@ class _MainScreenState extends State<MainScreen> {
       color: const Color(0xFFFFFFFF),
       child: Column(
         children: <Widget>[
+          Platform.isIOS ? null :
+          Container(
+            child: FlatButton(
+              onPressed: () {
+                FlutterAndroidPip.enterPictureInPictureMode;
+              },
+              child: Icon(
+                Icons.minimize,
+                color: Theme.of(context).indicatorColor,
+              ),
+            ),
+            alignment: Alignment.topRight,
+          ),
           const Padding(
             padding: EdgeInsets.only(
               top: _topSectionTopPadding,
@@ -219,7 +234,7 @@ class _MainScreenState extends State<MainScreen> {
     return Container(
       color: Colors.black,
       child: Column(
-        children: <Widget>[],
+        children: const <Widget>[],
       ),
     );
   }

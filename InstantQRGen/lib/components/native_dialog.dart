@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class NativeDialog extends StatelessWidget {
@@ -64,21 +64,6 @@ class NativeDialog extends StatelessWidget {
 }
 
 class NativeDialogAction extends StatelessWidget {
-  final Widget child;
-  final VoidCallback onPressed;
-  final Color color;
-
-  final bool isDefaultAction;
-
-  final TextStyle textStyle;
-  final ButtonTextTheme textTheme;
-
-  final EdgeInsets padding;
-
-  final ShapeBorder shape;
-
-  final Color textColor;
-
   const NativeDialogAction({
     Key key,
     this.child,
@@ -91,6 +76,16 @@ class NativeDialogAction extends StatelessWidget {
     this.textTheme,
     this.padding,
   }) : super(key: key);
+
+  final Widget child;
+  final VoidCallback onPressed;
+  final Color color;
+  final bool isDefaultAction;
+  final TextStyle textStyle;
+  final ButtonTextTheme textTheme;
+  final EdgeInsets padding;
+  final ShapeBorder shape;
+  final Color textColor;
 
   Widget createIosDialog(BuildContext context) {
     return CupertinoDialogAction(
@@ -122,9 +117,7 @@ class NativeDialogAction extends StatelessWidget {
 }
 
 class NativeTextField extends StatelessWidget {
-  final Function onChanged;
-
-  NativeTextField({
+  const NativeTextField({
     Key key,
     this.variant,
     this.decoration = const InputDecoration(),
@@ -158,6 +151,7 @@ class NativeTextField extends StatelessWidget {
             (maxLines == 1 ? TextInputType.text : TextInputType.multiline),
         super(key: key);
 
+  final Function onChanged;
   final String variant;
 
   /// Controls the text being edited.
@@ -354,13 +348,13 @@ class NativeTextField extends StatelessWidget {
 
   InputDecoration getDecoration(BuildContext context) {
     switch (variant) {
-      case "outlined":
+      case 'outlined':
         return decoration.copyWith(
-            border: OutlineInputBorder(
+            border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(6.0))),
-            contentPadding: EdgeInsets.all(16),
+            contentPadding: const EdgeInsets.all(16),
             fillColor: Theme.of(context).accentColor);
-      case "filled":
+      case 'filled':
         return decoration.copyWith(
             fillColor: Colors.grey.shade200, filled: true);
       default:
