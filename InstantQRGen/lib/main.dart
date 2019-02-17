@@ -1,12 +1,24 @@
+import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'screens/main.screen.dart';
 
-void main() {
+List<CameraDescription> cameras;
+
+Future<void> main() async {
+  try {
+    cameras = await availableCameras();
+  } on QRReaderException catch (e) {
+    logError(e.code, e.description);
+  }
   SystemChrome.setPreferredOrientations(
-          <DeviceOrientation>[DeviceOrientation.portraitUp])
+      <DeviceOrientation>[DeviceOrientation.portraitUp])
       .then((_) => runApp(App()));
 }
+
+void logError(String code, String message) =>
+    print('Error: $code\nError Message: $message');
 
 class App extends StatelessWidget {
   @override
@@ -18,7 +30,7 @@ class App extends StatelessWidget {
         accentColor: Colors.blue,
         indicatorColor: Colors.grey,
       ),
-      home: MainScreen(),
+      home: MainScreen(camera: cameras),
       debugShowCheckedModeBanner: false,
     );
   }

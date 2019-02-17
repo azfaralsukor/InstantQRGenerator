@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter_qr_demo/components/native_dialog.dart';
 import 'package:flutter_android_pip/flutter_android_pip.dart';
+import 'package:flutter_qr_demo/components/native_dialog.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({Key key, this.camera}) : super(key: key);
+  final List<CameraDescription> camera;
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -54,7 +59,12 @@ class _MainScreenState extends State<MainScreen> {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        body: TabBarView(children: <Widget>[_qrWidget(), _cameraWidget()]),
+        body: TabBarView(
+          children: <Widget>[
+            _qrWidget(),
+            CameraApp(camera: widget.camera,),
+          ],
+        ),
       ),
     );
   }
@@ -70,15 +80,18 @@ class _MainScreenState extends State<MainScreen> {
       color: const Color(0xFFFFFFFF),
       child: Column(
         children: <Widget>[
-          Platform.isIOS ? null :
-          Container(
+          Platform.isIOS
+              ? null
+              : Container(
             child: FlatButton(
               onPressed: () {
                 FlutterAndroidPip.enterPictureInPictureMode;
               },
               child: Icon(
                 Icons.minimize,
-                color: Theme.of(context).indicatorColor,
+                color: Theme
+                    .of(context)
+                    .indicatorColor,
               ),
             ),
             alignment: Alignment.topRight,
@@ -111,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                     print('[QR] ERROR - $ex');
                     setState(() {
                       _inputErrorText =
-                          'Error! Maybe your input value is too long?';
+                      'Error! Maybe your input value is too long?';
                     });
                   },
                 ),
@@ -229,15 +242,6 @@ class _MainScreenState extends State<MainScreen> {
       },
     );
   }
-
-  Widget _cameraWidget() {
-    return Container(
-      color: Colors.black,
-      child: Column(
-        children: const <Widget>[],
-      ),
-    );
-  }
 }
 
 class _Settings extends StatefulWidget {
@@ -259,7 +263,7 @@ class _SettingsState extends State<_Settings> {
 
   void _emailVal(String email) {
     final RegExp exp =
-        RegExp(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)');
+    RegExp(r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)');
     final Iterable<Match> matches = exp.allMatches(email);
     setState(() {
       if (matches.isEmpty) {
@@ -330,5 +334,55 @@ class _SettingsState extends State<_Settings> {
         ),
       ],
     );
+  }
+}
+
+class CameraApp extends StatefulWidget {
+  const CameraApp({Key key, this.camera}) : super(key: key);
+  final List<CameraDescription> camera;
+
+  @override
+  _CameraAppState createState() => _CameraAppState();
+}
+
+class _CameraAppState extends State<CameraApp> {
+  QRReaderController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = QRReaderController(
+        widget.camera[0], ResolutionPreset.medium, [CodeFormat.qr], (
+        dynamic value) {
+      print(value); // the result!
+      // ... do something
+      // wait 3 seconds then start scanning again.
+      Future<void>.delayed(
+          const Duration(seconds: 3), controller.startScanning);
+    });
+    controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+      controller.startScanning();
+    });
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!controller.value.isInitialized) {
+      return Container();
+    }
+    return AspectRatio(
+        aspectRatio:
+        controller.value.aspectRatio,
+        child: QRReaderPreview(controller));
   }
 }
