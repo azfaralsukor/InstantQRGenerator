@@ -12,4 +12,3 @@ packages
 .dart_tool
 pubspec.lock
 test_image.png
-InstantQRGen/android/app/google-services.json
