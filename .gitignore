@@ -12,3 +12,4 @@ packages
 .dart_tool
 pubspec.lock
 test_image.png
+google-services.json
